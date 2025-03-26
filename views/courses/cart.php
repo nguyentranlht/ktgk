@@ -1,18 +1,14 @@
 <?php
 session_start();
-require_once '../../config/database.php';
+require_once '../../models/Course.php';
 
-$userId = $_SESSION['user']['id'];
+$studentId = $_SESSION['student']['MaSV'];
 
-$sql = "SELECT HP.MaHP, HP.TenHP, HP.SoTinChi FROM ChiTietDangKy CT
-        JOIN DangKy DK ON CT.MaDK = DK.MaDK
-        JOIN HocPhan HP ON CT.MaHP = HP.MaHP
-        WHERE DK.MaSV = ?";
-$stmt = $conn->prepare($sql);
-$stmt->bind_param("s", $userId);
-$stmt->execute();
-$result = $stmt->get_result();
-$courses = $result->fetch_all(MYSQLI_ASSOC);
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['courseId'])) {
+    Course::removeRegisteredCourse($studentId, $_POST['courseId']);
+}
+
+$courses = Course::getRegisteredCourses($studentId);
 ?>
 <!DOCTYPE html>
 <html lang="vi">
@@ -53,6 +49,7 @@ $courses = $result->fetch_all(MYSQLI_ASSOC);
                         <th>Mã HP</th>
                         <th>Tên Học Phần</th>
                         <th>Số Tín Chỉ</th>
+                        <th>Hành Động</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -62,11 +59,17 @@ $courses = $result->fetch_all(MYSQLI_ASSOC);
                                 <td><?= htmlspecialchars($course['MaHP']) ?></td>
                                 <td><?= htmlspecialchars($course['TenHP']) ?></td>
                                 <td><?= htmlspecialchars($course['SoTinChi']) ?></td>
+                                <td>
+                                    <form method="post" action="">
+                                        <input type="hidden" name="courseId" value="<?= htmlspecialchars($course['MaHP']) ?>">
+                                        <button type="submit" class="btn btn-danger">Xóa</button>
+                                    </form>
+                                </td>
                             </tr>
                         <?php endforeach; ?>
                     <?php else: ?>
                         <tr>
-                            <td colspan="3">Chưa có học phần nào được đăng ký.</td>
+                            <td colspan="4">Chưa có học phần nào được đăng ký.</td>
                         </tr>
                     <?php endif; ?>
                 </tbody>

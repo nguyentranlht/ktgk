@@ -98,6 +98,9 @@ if (isset($_SESSION['student'])) {
                             <a class="nav-link" href="/dangky/views/courses/list.php">Đăng Ký Học Phần</a>
                         </li>
                         <li class="nav-item">
+                            <a class="nav-link" href="/dangky/views/courses/cart.php">Học Phần Đã Đăng Ký</a>
+                        </li>
+                        <li class="nav-item">
                             <span class="nav-link">👋 Xin chào, <?php echo $_SESSION['student']['HoTen']; ?></span>
                         </li>
                         <li class="nav-item">
